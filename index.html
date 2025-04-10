@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>نظام سندات القبض</title>
   <style>
     body {
@@ -92,24 +92,6 @@
       padding-right: 20px;
       font-size: 14px;
     }
-
-    @media (max-width: 480px) {
-      .container {
-        padding: 15px;
-      }
-
-      h2 {
-        font-size: 18px;
-      }
-
-      label, select, input, button, #message, #todayReceipts h3 {
-        font-size: 14px;
-      }
-
-      button {
-        padding: 12px;
-      }
-    }
   </style>
 </head>
 <body>
@@ -152,7 +134,7 @@
   </div>
 
   <script>
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8157Ok7yiUfpvjfyvHYfPqwwYxenoxcfQ5RQY5QD22_6a9Ihy-NY2cgCwbaNH6_BJ/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyHY9_cYmzjrKtj-UvEP7W_C25hl7wZ-42fREGLCyhyGOFBRx1Zp_Xog2uP2ebpSceI/exec';
     const daysArabic = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
     document.getElementById('todayDay').textContent = daysArabic[new Date().getDay()];
 
