@@ -2,17 +2,16 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
+  <title>نظام سندات القبض - بشتيوان</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>نظام سندات القبض</title>
   <style>
     body {
       font-family: 'Arial', sans-serif;
       background: #f0f4f8;
-      padding: 10px;
+      padding: 15px;
       color: #333;
       margin: 0;
     }
-
     .container {
       background: #fff;
       padding: 20px;
@@ -21,34 +20,28 @@
       max-width: 600px;
       margin: auto;
     }
-
     h2 {
       text-align: center;
       color: #2c3e50;
       margin-bottom: 20px;
-      font-size: 20px;
+      font-size: 22px;
     }
-
     .form-group {
       margin-bottom: 15px;
     }
-
     label {
       display: block;
       font-weight: bold;
       margin-bottom: 6px;
-      font-size: 14px;
+      font-size: 15px;
     }
-
     select, input {
       width: 100%;
       padding: 10px;
       border: 2px solid #ccc;
       border-radius: 8px;
       font-size: 14px;
-      box-sizing: border-box;
     }
-
     button {
       background: #27ae60;
       color: #fff;
@@ -59,55 +52,27 @@
       font-size: 16px;
       cursor: pointer;
     }
-
     button:hover {
       background: #219a52;
     }
-
     #message {
       text-align: center;
-      margin-top: 10px;
+      margin-top: 15px;
       font-weight: bold;
       min-height: 24px;
-      font-size: 14px;
     }
-
     .success { color: #27ae60; }
     .error { color: #e74c3c; }
     .loading { color: #7f8c8d; }
-
     #todayReceipts {
-      margin-top: 25px;
+      margin-top: 30px;
       background: #ecf0f1;
       padding: 15px;
       border-radius: 10px;
     }
-
-    #todayReceipts h3 {
-      margin-top: 0;
-      font-size: 18px;
-    }
-
-    #receiptList {
-      padding-right: 20px;
-      font-size: 14px;
-    }
-
-    @media (max-width: 480px) {
+    @media (max-width: 600px) {
       .container {
         padding: 15px;
-      }
-
-      h2 {
-        font-size: 18px;
-      }
-
-      label, select, input, button, #message, #todayReceipts h3 {
-        font-size: 14px;
-      }
-
-      button {
-        padding: 12px;
       }
     }
   </style>
@@ -151,9 +116,8 @@
     </div>
   </div>
 
-  <!-- نفس السكريبت السابق دون تغيير -->
   <script>
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxLgPYjlOrvYScPwN6UIK8AyCAG2AeQKkBXOMEhZ0GlO89xI9HM_IBH13YXWWe0uEsG/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyM1qsJX9JzCwl4aqcUFds7av3A69Kjne6wa1oW2ABneB2H5iBV-HNn58gnjs_jxj53/exec';
     const daysArabic = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
     document.getElementById('todayDay').textContent = daysArabic[new Date().getDay()];
 
@@ -183,7 +147,7 @@
         let total = 0;
         data.forEach(entry => {
           const li = document.createElement('li');
-          li.textContent = `${entry.client} - $${entry.usd}`;
+          li.textContent = `${entry.client} - $${entry.usd} (${entry.note})`;
           total += parseFloat(entry.usd || 0);
           list.appendChild(li);
         });
