@@ -2,13 +2,13 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>نظام سندات القبض - بشتيوان</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام سندات القبض</title>
   <style>
     body {
       font-family: 'Arial', sans-serif;
       background: #f0f4f8;
-      padding: 15px;
+      padding: 10px;
       color: #333;
       margin: 0;
     }
@@ -26,6 +26,7 @@
       text-align: center;
       color: #2c3e50;
       margin-bottom: 20px;
+      font-size: 20px;
     }
 
     .form-group {
@@ -36,6 +37,7 @@
       display: block;
       font-weight: bold;
       margin-bottom: 6px;
+      font-size: 14px;
     }
 
     select, input {
@@ -43,7 +45,8 @@
       padding: 10px;
       border: 2px solid #ccc;
       border-radius: 8px;
-      font-size: 16px;
+      font-size: 14px;
+      box-sizing: border-box;
     }
 
     button {
@@ -66,6 +69,7 @@
       margin-top: 10px;
       font-weight: bold;
       min-height: 24px;
+      font-size: 14px;
     }
 
     .success { color: #27ae60; }
@@ -79,9 +83,31 @@
       border-radius: 10px;
     }
 
-    @media (max-width: 600px) {
+    #todayReceipts h3 {
+      margin-top: 0;
+      font-size: 18px;
+    }
+
+    #receiptList {
+      padding-right: 20px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 480px) {
       .container {
         padding: 15px;
+      }
+
+      h2 {
+        font-size: 18px;
+      }
+
+      label, select, input, button, #message, #todayReceipts h3 {
+        font-size: 14px;
+      }
+
+      button {
+        padding: 12px;
       }
     }
   </style>
@@ -126,7 +152,7 @@
   </div>
 
   <script>
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz8zRTAqUVCR4sxoVttZh8v5HBoVF7nudZS1WEEKT69y38Zvii67FhbCK0NNf7JVLAy/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8157Ok7yiUfpvjfyvHYfPqwwYxenoxcfQ5RQY5QD22_6a9Ihy-NY2cgCwbaNH6_BJ/exec';
     const daysArabic = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
     document.getElementById('todayDay').textContent = daysArabic[new Date().getDay()];
 
@@ -156,11 +182,8 @@
         let total = 0;
         data.forEach(entry => {
           const li = document.createElement('li');
-          const client = entry.client || 'غير معروف';
-          const usd = entry.usd || '0';
-          const note = entry.note || '';
-          li.textContent = `${client} - $${usd}${note ? ` (${note})` : ''}`;
-          total += parseFloat(usd || 0);
+          li.textContent = `${entry.client} - $${entry.usd}`;
+          total += parseFloat(entry.usd || 0);
           list.appendChild(li);
         });
         document.getElementById('totalUSD').textContent = total.toFixed(2);
