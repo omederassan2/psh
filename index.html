@@ -101,12 +101,12 @@
     }
 
     .amount-box {
-      background-color: #f5f5f5;
+      background-color: #9c91ff;
       padding: 10px 20px;
       border-radius: 8px;
       font-weight: bold;
-      color: #2c3e50;
-      font-size: 15px;
+      color: #633030;
+      font-size: 24px;
       flex-grow: 1;
       text-align: center;
     }
@@ -124,20 +124,20 @@
 
     <div class="amount-container">
       <select id="amountSelect">
-        <option value="E2" selected>الراتب</option>
-        <option value="H2">المبيعات</option>
-        <option value="I4">التحصيل</option>
+        <option value="E2" selected>مووچەکەت</option>
+        <option value="H2">فرۆشتن</option>
+        <option value="I4">پارەی کۆکراوە</option>
       </select>
       <div id="amountValues" class="amount-box">جارٍ التحميل...</div>
     </div>
 
     <div class="form-group">
-      <label for="note">ملاحظة :</label>
+      <label for="note">تێبینی :</label>
       <input type="text" id="note" placeholder="ملاحظة">
     </div>
 
     <div class="form-group">
-      <label for="clientSelect">اسم العميل:</label>
+      <label for="clientSelect">ناوی کڕیار:</label>
       <select id="clientSelect"><option value="">جارٍ تحميل العملاء...</option></select>
     </div>
 
@@ -156,13 +156,13 @@
       <input type="number" id="exchangeRate" placeholder="سعر الدولار مقابل الدينار">
     </div>
 
-    <button onclick="validateAndSubmit()">تسجيل السند</button>
+    <button onclick="validateAndSubmit()">تۆمارکردنی پسوڵەکە</button>
     <div id="message"></div>
 
     <div id="todayReceipts">
-      <h3>سندات اليوم:</h3>
+      <h3>پسوڵەی ئەمڕۆ:</h3>
       <ul id="receiptList"></ul>
-      <p><strong>المجموع بالدولار: $<span id="totalUSD">0</span></strong></p>
+      <p><strong>کۆی گشتی بە دۆلار: $<span id="totalUSD">0</span></strong></p>
     </div>
   </div>
 
@@ -253,7 +253,7 @@
           body: JSON.stringify(formData),
           mode: 'no-cors',
         });
-        showMessage('تم الإرسال بنجاح', 'success');
+        showMessage('پسوڵەکە بە سەرکەوتوویی تۆمار کراوە.', 'success');
         resetForm();
         loadTodayReceipts();
       } catch (error) {
