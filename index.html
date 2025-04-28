@@ -105,7 +105,7 @@
       padding: 10px 20px;
       border-radius: 8px;
       font-weight: bold;
-      color: #633030;
+      color: #030000;
       font-size: 24px;
       flex-grow: 1;
       text-align: center;
@@ -156,7 +156,7 @@
       <input type="number" id="exchangeRate" placeholder="سعر الدولار مقابل الدينار">
     </div>
 
-    <button onclick="validateAndSubmit()">تۆمارکردنی پسوڵەکە</button>
+    <button id="submitBtn" onclick="validateAndSubmit()">تۆمارکردنی پسوڵەکە</button>
     <div id="message"></div>
 
     <div id="todayReceipts">
@@ -180,7 +180,7 @@
         const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getClients`);
         const data = await response.json();
         const select = document.getElementById('clientSelect');
-        select.innerHTML = '<option value="">اختر عميل اليوم...</option>';
+        select.innerHTML = '<option value="">مشتەری هەڵبژێرە...</option>';
         data.forEach(client => {
           const option = document.createElement('option');
           option.value = client.name;
@@ -226,40 +226,50 @@
     }
 
     async function validateAndSubmit() {
-      const client = document.getElementById('clientSelect').value;
-      const note = document.getElementById('note').value;
-      const usd = document.getElementById('usd').value;
-      const iqd = document.getElementById('iqd').value;
-      const exchangeRate = document.getElementById('exchangeRate').value;
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'جارٍ الإرسال...';
 
-      if (!note.trim() && !client.trim()) {
-        showMessage('الرجاء إدخال ملاحظة أو اسم العميل على الأقل', 'error');
-        return;
-      }
+  const client = document.getElementById('clientSelect').value;
+  const note = document.getElementById('note').value;
+  const usd = document.getElementById('usd').value;
+  const iqd = document.getElementById('iqd').value;
+  const exchangeRate = document.getElementById('exchangeRate').value;
 
-      const formData = {
-        client: client || 'غير محدد',
-        note: note || 'غير محدد',
-        usd: usd || '0',
-        iqd: iqd || '0',
-        exchangeRate: exchangeRate || '0',
-      };
+  if (!note.trim() && !client.trim()) {
+    showMessage('تکایە بەلایەنی کەمەوە تێبینییەک یان ناوی کڕیارێک بنووسە.', 'error');
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'تۆمارکردنی پسوڵەکە';
+    return;
+  }
 
-      try {
-        showMessage('جارٍ إرسال البيانات...', 'loading');
-        await fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData),
-          mode: 'no-cors',
-        });
-        showMessage('پسوڵەکە بە سەرکەوتوویی تۆمار کراوە.', 'success');
-        resetForm();
-        loadTodayReceipts();
-      } catch (error) {
-        showMessage('فشل في الإرسال', 'error');
-      }
-    }
+  const formData = {
+    client: client || 'غير محدد',
+    note: note || 'غير محدد',
+    usd: usd || '0',
+    iqd: iqd || '0',
+    exchangeRate: exchangeRate || '0',
+  };
+
+  try {
+    showMessage('جارٍ إرسال البيانات...', 'loading');
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+      mode: 'no-cors',
+    });
+    showMessage('پسوڵەکە بە سەرکەوتوویی تۆمار کراوە.', 'success');
+    resetForm();
+    loadTodayReceipts();
+  } catch (error) {
+    showMessage('فشل في الإرسال', 'error');
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'تۆمارکردنی پسوڵەکە';
+  }
+}
+
 
     function resetForm() {
       document.getElementById('clientSelect').value = '';
