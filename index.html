@@ -177,35 +177,35 @@
     document.getElementById('amountSelect').addEventListener('change', loadAmounts);
 
     async function loadClients() {
-      try {
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getClients`);
-        const clientsData = await response.json();
-        const select = document.getElementById('clientSelect');
-        select.innerHTML = '<option value="">مشتەری هەڵبژێرە...</option>';
+  try {
+    // أولاً: نحمل سندات اليوم
+    const receiptResponse = await fetch(`${GOOGLE_SCRIPT_URL}?action=getTodayReceipts`);
+    const receiptData = await receiptResponse.json();
+    const todayClientNames = receiptData.map(entry => entry.client.split('-')[0].trim());
 
-        // حمل بيانات سندات اليوم
-        const receiptsResponse = await fetch(`${GOOGLE_SCRIPT_URL}?action=getTodayReceipts`);
-        const receiptsData = await receiptsResponse.json();
-        const todayClientNames = receiptsData.map(entry => entry.client.split('-')[0].trim());
+    // بعدها: نحمل العملاء
+    const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getClients`);
+    const clientsData = await response.json();
+    const select = document.getElementById('clientSelect');
+    select.innerHTML = '<option value="">مشتەری هەڵبژێرە...</option>';
 
-        clientsData.forEach(client => {
-          const nameOnly = client.name.split('-')[0].trim();
-          const option = document.createElement('option');
-          option.value = client.name;
-          option.textContent = client.name;
+    clientsData.forEach(client => {
+      const nameOnly = client.name.split('-')[0].trim();
+      const option = document.createElement('option');
+      option.value = client.name;
 
-          if (todayClientNames.includes(nameOnly)) {
-            option.style.color = 'red';
-            option.style.fontWeight = 'bold';
-          }
-
-          select.appendChild(option);
-        });
-
-      } catch (error) {
-        showMessage('فشل في تحميل العملاء', 'error');
+      if (todayClientNames.includes(nameOnly)) {
+        option.textContent = `✅ ${client.name}`;
+      } else {
+        option.textContent = client.name;
       }
-    }
+
+      select.appendChild(option);
+    });
+  } catch (error) {
+    showMessage('فشل في تحميل العملاء أو سندات اليوم', 'error');
+  }
+}
 
     async function loadTodayReceipts() {
       try {
