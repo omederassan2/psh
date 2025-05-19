@@ -1,3 +1,4 @@
+<!-- الكود HTML كاملًا مع التعديلات المطلوبة -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -178,15 +179,29 @@
     async function loadClients() {
       try {
         const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getClients`);
-        const data = await response.json();
+        const clientsData = await response.json();
         const select = document.getElementById('clientSelect');
         select.innerHTML = '<option value="">مشتەری هەڵبژێرە...</option>';
-        data.forEach(client => {
+
+        // حمل بيانات سندات اليوم
+        const receiptsResponse = await fetch(`${GOOGLE_SCRIPT_URL}?action=getTodayReceipts`);
+        const receiptsData = await receiptsResponse.json();
+        const todayClientNames = receiptsData.map(entry => entry.client.split('-')[0].trim());
+
+        clientsData.forEach(client => {
+          const nameOnly = client.name.split('-')[0].trim();
           const option = document.createElement('option');
           option.value = client.name;
           option.textContent = client.name;
+
+          if (todayClientNames.includes(nameOnly)) {
+            option.style.color = 'red';
+            option.style.fontWeight = 'bold';
+          }
+
           select.appendChild(option);
         });
+
       } catch (error) {
         showMessage('فشل في تحميل العملاء', 'error');
       }
@@ -226,50 +241,51 @@
     }
 
     async function validateAndSubmit() {
-  const submitBtn = document.getElementById('submitBtn');
-  submitBtn.disabled = true;
-  submitBtn.textContent = 'جارٍ الإرسال...';
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'جارٍ الإرسال...';
 
-  const client = document.getElementById('clientSelect').value;
-  const note = document.getElementById('note').value;
-  const usd = document.getElementById('usd').value;
-  const iqd = document.getElementById('iqd').value;
-  const exchangeRate = document.getElementById('exchangeRate').value;
+      let clientFull = document.getElementById('clientSelect').value;
+      let client = clientFull.split('-')[0].trim();  // الاسم فقط بدون الرقم
+      const note = document.getElementById('note').value;
+      const usd = document.getElementById('usd').value;
+      const iqd = document.getElementById('iqd').value;
+      const exchangeRate = document.getElementById('exchangeRate').value;
 
-  if (!note.trim() && !client.trim()) {
-    showMessage('تکایە بەلایەنی کەمەوە تێبینییەک یان ناوی کڕیارێک بنووسە.', 'error');
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'تۆمارکردنی پسوڵەکە';
-    return;
-  }
+      if (!note.trim() && !client.trim()) {
+        showMessage('تکایە بەلایەنی کەمەوە تێبینییەک یان ناوی کڕیارێک بنووسە.', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'تۆمارکردنی پسوڵەکە';
+        return;
+      }
 
-  const formData = {
-    client: client || 'غير محدد',
-    note: note || 'غير محدد',
-    usd: usd || '0',
-    iqd: iqd || '0',
-    exchangeRate: exchangeRate || '0',
-  };
+      const formData = {
+        client: client || 'غير محدد',
+        note: note || 'غير محدد',
+        usd: usd || '0',
+        iqd: iqd || '0',
+        exchangeRate: exchangeRate || '0',
+      };
 
-  try {
-    showMessage('جارٍ إرسال البيانات...', 'loading');
-    await fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-      mode: 'no-cors',
-    });
-    showMessage('پسوڵەکە بە سەرکەوتوویی تۆمار کراوە.', 'success');
-    resetForm();
-    loadTodayReceipts();
-  } catch (error) {
-    showMessage('فشل في الإرسال', 'error');
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'تۆمارکردنی پسوڵەکە';
-  }
-}
-
+      try {
+        showMessage('جارٍ إرسال البيانات...', 'loading');
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+          mode: 'no-cors',
+        });
+        showMessage('پسوڵەکە بە سەرکەوتوویی تۆمار کراوە.', 'success');
+        resetForm();
+        loadTodayReceipts();
+        loadClients(); // إعادة تحميل العملاء بعد الإرسال للتحديث
+      } catch (error) {
+        showMessage('فشل في الإرسال', 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'تۆمارکردنی پسوڵەکە';
+      }
+    }
 
     function resetForm() {
       document.getElementById('clientSelect').value = '';
@@ -287,8 +303,8 @@
     }
 
     window.onload = () => {
-      loadClients();
       loadTodayReceipts();
+      loadClients();
       loadAmounts();
     };
   </script>
