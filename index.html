@@ -255,7 +255,6 @@
       googleScriptUrl: 'https://script.google.com/macros/s/AKfycbzmwpV8-NGWUnmC3QoG9ixXnv3ELStZlPqlQ2_NVrcU0nDYAr_sv_0jlvCR-B0nSlw4/exec',
       externalSheetUrl: 'https://script.google.com/macros/s/AKfycbwe3LNxv03ZGn9Cj3mr7iq4facjiR2AD4iy_vNNQWgZQ1sgSMSBkPGYJOtw-M0zPgw_ug/exec',
       exchangeRateUrl: 'https://script.google.com/macros/s/AKfycbzAvk87pUPqPzrnlcyXk7VfaT5Kk4pzeW2M-SD-2XxVhudmNG8vRJ-IgK7hJt89LBif/exec',
-      locationSheetUrl: 'https://script.google.com/macros/s/AKfycbz9BOhGJxRxfZZSBr1g4KIRQposnA9y9ayF0GfkOQzzi7SBsHkSSYwKDTfmKi64fYzu/exec',
       daysArabic: ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت']
     };
 
@@ -484,32 +483,6 @@
         submitBtn.disabled = false;
         submitBtn.textContent = 'تۆمارکردنی پسوڵەکە';
       }
-      // إرسال بيانات الموقع إلى شيت آخر
-if (client) {
-  try {
-    navigator.geolocation.getCurrentPosition(async (position) => {
-      const locationData = {
-        client: client,
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-        timestamp: new Date().toISOString()
-      };
-
-      await fetch(CONFIG.locationSheetUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(locationData),
-        mode: 'no-cors',
-      });
-
-      console.log("✅ تم إرسال الموقع الجغرافي بنجاح");
-    }, (error) => {
-      console.warn("⚠️ تعذر الحصول على الموقع:", error.message);
-    });
-  } catch (locErr) {
-    console.error("📍 خطأ في إرسال الموقع:", locErr);
-  }
-}
     }
 
     // إعادة تعيين النموذج
