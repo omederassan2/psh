@@ -45,7 +45,6 @@
       max-width: 600px;
       margin: 20px auto;
       transition: var(--transition);
-      position: relative;
     }
 
     .header {
@@ -412,7 +411,7 @@
 </head>
 <body>
   <div class="container">
-    <!-- نافذة التنبيه داخل الصفحة -->
+    <!-- نافذة التنبيه -->
     <div class="exchange-rate-alert" id="exchangeRateAlert">
       <div class="alert-header">
         <div class="alert-icon">⚠️</div>
@@ -428,10 +427,6 @@
         <div class="rate-change">
           <span class="rate-label">السعر الجديد:</span>
           <span class="rate-value new-rate" id="newRateValue">0</span>
-        </div>
-        <div class="rate-change">
-          <span class="rate-label">مقدار التغيير:</span>
-          <span class="rate-value" id="rateChangeValue">0</span>
         </div>
       </div>
       
@@ -515,7 +510,6 @@
     // متغيرات لتخزين أسعار الصرف
     let previousExchangeRate = null;
     let currentExchangeRate = null;
-    let alertShown = false;
 
     // تهيئة الصفحة عند التحميل
     document.addEventListener('DOMContentLoaded', () => {
@@ -667,68 +661,60 @@
       }
     }
 
-    // تحميل سعر الصرف
+    // تحميل سعر الصرف مع التتبع
     async function loadExchangeRate() {
       try {
+        // جلب السعر السابق من localStorage
+        const storedPreviousRate = localStorage.getItem('previousExchangeRate');
+        previousExchangeRate = storedPreviousRate ? parseFloat(storedPreviousRate) : null;
+        
+        console.log('🔍 جاري تحميل سعر الصرف...');
+        console.log('📊 السعر السابق من التخزين:', previousExchangeRate);
+        
         const response = await fetch(CONFIG.exchangeRateUrl);
         const data = await response.json();
         const newRate = parseFloat(data.rate);
         
-        console.log('سعر الصرف الجديد:', newRate, 'السعر السابق:', previousExchangeRate);
+        console.log('📊 السعر الجديد:', newRate);
         
         // تحديث السعر الحالي
         currentExchangeRate = newRate;
         
-        // التحقق مما إذا كان سعر الصرف قد تغير
+        // التحقق من التغير (فقط إذا كان هناك سعر سابق)
         if (previousExchangeRate !== null && previousExchangeRate !== newRate) {
-          console.log('تم تغيير سعر الصرف!');
+          console.log('🚨 تغيير مكتشف! الفرق:', newRate - previousExchangeRate);
           showExchangeRateAlert(previousExchangeRate, newRate);
+        } else if (previousExchangeRate === null) {
+          console.log('✅ أول تحميل للسعر - سيتم تخزينه');
         } else {
-          console.log('لم يتغير سعر الصرف');
+          console.log('✅ لا يوجد تغيير');
         }
         
-        // تحديث سعر الصرف السابق
+        // حفظ السعر الجديد كسعر سابق للمرة القادمة
+        localStorage.setItem('previousExchangeRate', newRate.toString());
         previousExchangeRate = newRate;
         
+        // تحديث العرض
         document.getElementById('exchangeRate').value = newRate;
+        
       } catch (error) {
+        console.error('❌ خطأ في تحميل سعر الصرف:', error);
         showMessage('فشل في تحميل سعر الصرف', 'error');
-        console.error('Error loading exchange rate:', error);
       }
     }
 
     // عرض تنبيه تغيير سعر الصرف
     function showExchangeRateAlert(oldRate, newRate) {
-      // تحديث القيم في نافذة التنبيه
-      document.getElementById('oldRateValue').textContent = formatExchangeRate(oldRate);
-      document.getElementById('newRateValue').textContent = formatExchangeRate(newRate);
+      document.getElementById('oldRateValue').textContent = formatRate(oldRate);
+      document.getElementById('newRateValue').textContent = formatRate(newRate);
       
-      // حساب ونسبة التغيير
-      const change = newRate - oldRate;
-      const changePercent = ((change / oldRate) * 100).toFixed(2);
-      
-      const changeText = change > 0 
-        ? `+${formatExchangeRate(change)} (+${changePercent}%)`
-        : `${formatExchangeRate(change)} (${changePercent}%)`;
-      
-      document.getElementById('rateChangeValue').textContent = changeText;
-      
-      // إضافة لون للتغيير
-      const changeElement = document.getElementById('rateChangeValue');
-      changeElement.style.color = change > 0 ? '#e74c3c' : '#27ae60';
-      
-      // عرض التنبيه
       const alertElement = document.getElementById('exchangeRateAlert');
       alertElement.classList.add('active');
-      
-      // تمرير الصفحة إلى الأعلى لرؤية التنبيه
       alertElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      
-      alertShown = true;
     }
 
     // تنسيق عرض سعر الصرف
-    function formatExchangeRate(rate) {
+    function formatRate(rate) {
       return rate.toLocaleString('en-US', {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0
@@ -737,9 +723,7 @@
 
     // إخفاء تنبيه تغيير سعر الصرف
     function hideExchangeRateAlert() {
-      const alertElement = document.getElementById('exchangeRateAlert');
-      alertElement.classList.remove('active');
-      alertShown = false;
+      document.getElementById('exchangeRateAlert').classList.remove('active');
     }
 
     // تحويل من الدولار إلى الدينار
@@ -845,7 +829,7 @@
     }
 
     // إضافة console.log للتصحيح
-    console.log('تم تحميل النظام بنجاح');
+    console.log('🚀 تم تحميل النظام بنجاح مع نظام التخزين المحلي');
   </script>
 </body>
 </html>
