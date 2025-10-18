@@ -415,26 +415,26 @@
     <div class="exchange-rate-alert" id="exchangeRateAlert">
       <div class="alert-header">
         <div class="alert-icon">⚠️</div>
-        <div class="alert-title">تحذير: تغيير سعر الصرف</div>
+        <div class="alert-title">ئاگاداری:   نرخی ئاڵوگۆڕ گۆڕا</div>
       </div>
-      <div class="alert-message">تم تحديث سعر الصرف بنجاح</div>
+      <div class="alert-message">نرخی ئاڵوگۆڕی دراو بەپێی بۆرسەی هەولێر ئێستا</div>
       
       <div class="exchange-rate-info">
         <div class="rate-change">
-          <span class="rate-label">السعر السابق:</span>
+          <span class="rate-label">نرخی پێشوو :</span>
           <span class="rate-value old-rate" id="oldRateValue">0</span>
         </div>
         <div class="rate-change">
-          <span class="rate-label">السعر الجديد:</span>
+          <span class="rate-label">نرخی ئێستا :</span>
           <span class="rate-value new-rate" id="newRateValue">0</span>
         </div>
       </div>
       
-      <button class="alert-button" id="alertOkButton">موافق - تم الفهم</button>
+      <button class="alert-button" id="alertOkButton">باشە</button>
     </div>
 
     <div class="header">
-      <h2>سند قبض - بشتيوان</h2>
+      <h2>کۆمپانیای ئومێدی ڕاسان - بشتيوان</h2>
       <div class="date-display" id="todayDay"></div>
     </div>
 
@@ -444,7 +444,7 @@
         <option value="H2">فرۆشتن</option>
         <option value="I4">پارەی کۆکراوە</option>
       </select>
-      <div id="amountValues" class="amount-box">جاري التحميل...</div>
+      <div id="amountValues" class="amount-box">چاوەڕێ بکە ...</div>
     </div>
 
     <div class="form-group">
@@ -455,25 +455,25 @@
     <div class="form-group">
       <label for="clientSelect">ناوی کڕیار:</label>
       <select id="clientSelect">
-        <option value="">جاري تحميل العملاء...</option>
+        <option value="">چاوەڕێ بکە  ...</option>
       </select>
     </div>
 
     <div class="currency-inputs">
       <div class="form-group">
-        <label for="usd">المبلغ بالدولار ($):</label>
-        <input type="number" id="usd" placeholder="أدخل المبلغ بالدولار" step="0.01" min="0" inputmode="decimal">
+        <label for="usd">بڕی بە دۆلار  ($):</label>
+        <input type="number" id="usd" placeholder="بڕە پارەکە بە دۆلار بنووسە" step="0.01" min="0" inputmode="decimal">
       </div>
 
       <div class="form-group">
-        <label for="iqd">المبلغ بالدينار (IQD):</label>
-        <input type="number" id="iqd" placeholder="أدخل المبلغ بالدينار" step="1" min="0" inputmode="numeric">
+        <label for="iqd"> بڕی بە دینار (IQD):</label>
+        <input type="number" id="iqd" placeholder="بڕە پارەکە بە دينار بنووس" step="1" min="0" inputmode="numeric">
       </div>
     </div>
 
     <div class="form-group">
-      <label for="exchangeRate">سعر الصرف:</label>
-      <input type="number" id="exchangeRate" placeholder="سعر الدولار مقابل الدينار" readonly>
+      <label for="exchangeRate">نرخی ئاڵوگۆڕ :</label>
+      <input type="number" id="exchangeRate" placeholder="نرخی دۆلار بەرامبەر بە دینار" readonly>
     </div>
 
     <button id="submitBtn">
