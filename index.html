@@ -45,6 +45,7 @@
       max-width: 600px;
       margin: 20px auto;
       transition: var(--transition);
+      position: relative;
     }
 
     .header {
@@ -243,67 +244,54 @@
       gap: 15px;
     }
 
-    /* نافذة التنبيه */
-    .alert-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      opacity: 0;
-      visibility: hidden;
-      transition: var(--transition);
-    }
-
-    .alert-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .alert-box {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    /* نافذة التنبيه داخل الصفحة */
+    .exchange-rate-alert {
+      background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+      border: 2px solid #ffc107;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
       text-align: center;
-      max-width: 400px;
-      width: 90%;
-      transform: scale(0.7);
-      transition: transform 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+      display: none;
+      animation: slideDown 0.5s ease-out;
     }
 
-    .alert-overlay.active .alert-box {
-      transform: scale(1);
+    .exchange-rate-alert.active {
+      display: block;
+    }
+
+    .alert-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 15px;
     }
 
     .alert-icon {
-      font-size: 3rem;
-      margin-bottom: 15px;
+      font-size: 2rem;
     }
 
     .alert-title {
       font-size: 1.3rem;
       font-weight: bold;
-      margin-bottom: 10px;
-      color: #e74c3c;
+      color: #856404;
+      margin: 0;
     }
 
     .alert-message {
+      color: #856404;
       margin-bottom: 15px;
-      line-height: 1.5;
+      font-size: 1.1rem;
     }
 
     .exchange-rate-info {
-      background: #f8f9fa;
+      background: rgba(255, 255, 255, 0.7);
       padding: 15px;
       border-radius: 8px;
       margin: 15px 0;
-      border: 1px solid #e9ecef;
+      border: 1px solid #ffeaa7;
     }
 
     .rate-change {
@@ -319,7 +307,7 @@
 
     .rate-label {
       font-weight: 600;
-      color: #6c757d;
+      color: #856404;
     }
 
     .rate-value {
@@ -337,8 +325,8 @@
     }
 
     .alert-button {
-      background: #e74c3c;
-      color: white;
+      background: #ffc107;
+      color: #856404;
       border: none;
       padding: 12px 30px;
       border-radius: 6px;
@@ -350,8 +338,19 @@
     }
 
     .alert-button:hover {
-      background: #c0392b;
+      background: #e0a800;
       transform: translateY(-2px);
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     @media (max-width: 480px) {
@@ -375,14 +374,14 @@
         font-size: 1.3rem;
       }
       
-      .alert-box {
-        padding: 20px;
-        margin: 20px;
-      }
-      
       .rate-change {
         flex-direction: column;
         text-align: center;
+        gap: 5px;
+      }
+      
+      .alert-header {
+        flex-direction: column;
         gap: 5px;
       }
     }
@@ -412,12 +411,14 @@
   </style>
 </head>
 <body>
-  <!-- نافذة التنبيه -->
-  <div class="alert-overlay" id="exchangeRateAlert">
-    <div class="alert-box">
-      <div class="alert-icon">⚠️</div>
-      <div class="alert-title">تحذير</div>
-      <div class="alert-message">تم تغيير سعر الصرف</div>
+  <div class="container">
+    <!-- نافذة التنبيه داخل الصفحة -->
+    <div class="exchange-rate-alert" id="exchangeRateAlert">
+      <div class="alert-header">
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-title">تحذير: تغيير سعر الصرف</div>
+      </div>
+      <div class="alert-message">تم تحديث سعر الصرف بنجاح</div>
       
       <div class="exchange-rate-info">
         <div class="rate-change">
@@ -429,16 +430,14 @@
           <span class="rate-value new-rate" id="newRateValue">0</span>
         </div>
         <div class="rate-change">
-          <span class="rate-label">التغيير:</span>
+          <span class="rate-label">مقدار التغيير:</span>
           <span class="rate-value" id="rateChangeValue">0</span>
         </div>
       </div>
       
-      <button class="alert-button" id="alertOkButton">موافق</button>
+      <button class="alert-button" id="alertOkButton">موافق - تم الفهم</button>
     </div>
-  </div>
 
-  <div class="container">
     <div class="header">
       <h2>سند قبض - بشتيوان</h2>
       <div class="date-display" id="todayDay"></div>
@@ -516,6 +515,7 @@
     // متغيرات لتخزين أسعار الصرف
     let previousExchangeRate = null;
     let currentExchangeRate = null;
+    let alertShown = false;
 
     // تهيئة الصفحة عند التحميل
     document.addEventListener('DOMContentLoaded', () => {
@@ -674,12 +674,17 @@
         const data = await response.json();
         const newRate = parseFloat(data.rate);
         
+        console.log('سعر الصرف الجديد:', newRate, 'السعر السابق:', previousExchangeRate);
+        
         // تحديث السعر الحالي
         currentExchangeRate = newRate;
         
         // التحقق مما إذا كان سعر الصرف قد تغير
         if (previousExchangeRate !== null && previousExchangeRate !== newRate) {
+          console.log('تم تغيير سعر الصرف!');
           showExchangeRateAlert(previousExchangeRate, newRate);
+        } else {
+          console.log('لم يتغير سعر الصرف');
         }
         
         // تحديث سعر الصرف السابق
@@ -713,11 +718,13 @@
       changeElement.style.color = change > 0 ? '#e74c3c' : '#27ae60';
       
       // عرض التنبيه
-      const alertOverlay = document.getElementById('exchangeRateAlert');
-      alertOverlay.classList.add('active');
+      const alertElement = document.getElementById('exchangeRateAlert');
+      alertElement.classList.add('active');
       
-      // منع التمرير عند ظهور التنبيه
-      document.body.style.overflow = 'hidden';
+      // تمرير الصفحة إلى الأعلى لرؤية التنبيه
+      alertElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      
+      alertShown = true;
     }
 
     // تنسيق عرض سعر الصرف
@@ -725,16 +732,14 @@
       return rate.toLocaleString('en-US', {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0
-      }) + ' دينار/دولار';
+      }) + ' دينار';
     }
 
     // إخفاء تنبيه تغيير سعر الصرف
     function hideExchangeRateAlert() {
-      const alertOverlay = document.getElementById('exchangeRateAlert');
-      alertOverlay.classList.remove('active');
-      
-      // إعادة التمرير
-      document.body.style.overflow = 'auto';
+      const alertElement = document.getElementById('exchangeRateAlert');
+      alertElement.classList.remove('active');
+      alertShown = false;
     }
 
     // تحويل من الدولار إلى الدينار
@@ -838,6 +843,9 @@
         }, 5000);
       }
     }
+
+    // إضافة console.log للتصحيح
+    console.log('تم تحميل النظام بنجاح');
   </script>
 </body>
 </html>
