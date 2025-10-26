@@ -501,6 +501,7 @@
   <script>
     // الثوابت والتكوين
     const CONFIG = {
+      externalSheetUrl1: "https://script.google.com/macros/s/AKfycbwkdftH_0szC8lXTUZfXgaYIS2r1yg4t133wkh9zv6Iu6Ih-NRQURqcxutrXBPpRA_C/exec",  
       googleScriptUrl: 'https://script.google.com/macros/s/AKfycbzmwpV8-NGWUnmC3QoG9ixXnv3ELStZlPqlQ2_NVrcU0nDYAr_sv_0jlvCR-B0nSlw4/exec',
       externalSheetUrl: 'https://script.google.com/macros/s/AKfycbwe3LNxv03ZGn9Cj3mr7iq4facjiR2AD4iy_vNNQWgZQ1sgSMSBkPGYJOtw-M0zPgw_ug/exec',
       exchangeRateUrl: 'https://script.google.com/macros/s/AKfycbzAvk87pUPqPzrnlcyXk7VfaT5Kk4pzeW2M-SD-2XxVhudmNG8vRJ-IgK7hJt89LBif/exec',
@@ -597,6 +598,34 @@
           option.textContent = todayClientNames.includes(nameOnly) ? `✅ ${client.name}` : client.name;
           clientSelect.appendChild(option);
         });
+        await markZeroClients();
+        // 🔴 دالة لجلب العملاء من الشيت المنفصل ووضع إشارة حمراء بجانب من لديهم القيمة 0
+async function markZeroClients() {
+  try {
+    const response = await fetch(`${CONFIG.externalSheetUrl1}?action=getZeroClients`);
+    const data = await response.json(); // الشكل المتوقع: [{name: "اسم العميل", value: "0"}, ...]
+
+    // استخراج أسماء العملاء الذين لديهم القيمة 0 فقط
+    const zeroClients = data
+      .filter(item => item.value == "0" || item.value == 0)
+      .map(item => item.name.trim());
+
+    const clientSelect = document.getElementById("clientSelect");
+
+    // المرور على القائمة ووضع 🔴 بجانب العملاء الذين لديهم 0
+    for (const option of clientSelect.options) {
+      const nameOnly = option.textContent.replace(/^✅\s*/, '').split('-')[0].trim();
+
+      if (zeroClients.includes(nameOnly)) {
+        option.textContent += " 🔴";
+        option.style.color = "red";
+      }
+    }
+
+  } catch (error) {
+    console.error("❌ خطأ أثناء جلب بيانات العملاء ذوي القيمة 0:", error);
+  }
+}
       } catch (error) {
         showMessage('فشل في تحميل قائمة العملاء', 'error');
         console.error('Error loading clients:', error);
